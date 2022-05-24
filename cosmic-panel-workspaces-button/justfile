@@ -1,0 +1,16 @@
+rootdir := ''
+prefix := '/usr'
+clean := '0'
+debug := '0'
+
+id := 'com.system76.CosmicPanelWorkspacesButton'
+
+sharedir := rootdir + prefix + '/share'
+iconsdir := sharedir + '/icons/hicolor/scalable/apps'
+bindir := rootdir + prefix + '/bin'
+
+# Installs files into the system
+install:
+    install -Dm0644 data/icons/{{id}}.svg {{iconsdir}}/{{id}}.svg
+    install -Dm0644 data/{{id}}.desktop {{sharedir}}/applications/{{id}}.desktop
+

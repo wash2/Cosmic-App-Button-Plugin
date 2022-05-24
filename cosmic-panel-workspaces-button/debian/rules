@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+DESTDIR = debian/cosmic-panel-workspaces-button
+CLEAN ?= 1
+VENDOR ?= 1
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	just rootdir=$(DESTDIR) install
