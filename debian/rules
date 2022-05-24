@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-DESTDIR = debian/cosmic-dock-app-button
+DESTDIR = debian/cosmic-panel-app-button
 CLEAN ?= 1
 VENDOR ?= 1
 

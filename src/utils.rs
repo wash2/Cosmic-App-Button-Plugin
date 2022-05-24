@@ -14,10 +14,7 @@ pub fn data_path() -> PathBuf {
 }
 
 pub fn thread_context() -> glib::MainContext {
-    glib::MainContext::thread_default().unwrap_or_else(|| {
-        let ctx = glib::MainContext::new();
-        ctx
-    })
+    glib::MainContext::thread_default().unwrap_or_else(|| glib::MainContext::new())
 }
 
 pub fn block_on<F>(future: F) -> F::Output

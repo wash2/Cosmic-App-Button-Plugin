@@ -3,11 +3,10 @@
 use crate::fl;
 use cascade::cascade;
 use gtk4::{
-    gdk::Display,
-    gio::{self, AppLaunchContext, DesktopAppInfo, Icon},
+    gio::{self, DesktopAppInfo, Icon},
     glib::{self, Object},
     prelude::*,
-    Application, Button, IconTheme,
+    Align, Application, Button, Orientation,
 };
 use std::process::Command;
 
@@ -16,16 +15,16 @@ mod imp;
 const APPLIBRARY: &str = "com.system76.CosmicAppLibrary.desktop";
 
 glib::wrapper! {
-    pub struct CosmicDockAppButtonWindow(ObjectSubclass<imp::CosmicDockAppButtonWindow>)
+    pub struct CosmicPanelAppButtonWindow(ObjectSubclass<imp::CosmicPanelAppButtonWindow>)
         @extends gtk4::ApplicationWindow, gtk4::Window, gtk4::Widget,
         @implements gio::ActionGroup, gio::ActionMap, gtk4::Accessible, gtk4::Buildable,
                     gtk4::ConstraintTarget, gtk4::Native, gtk4::Root, gtk4::ShortcutManager;
 }
 
-impl CosmicDockAppButtonWindow {
+impl CosmicPanelAppButtonWindow {
     pub fn new(app: &Application) -> Self {
         let self_: Self = Object::new(&[("application", app)])
-            .expect("Failed to create `CosmicDockAppButtonWindow`.");
+            .expect("Failed to create `CosmicPanelAppButtonWindow`.");
 
         cascade! {
             &self_;
@@ -33,26 +32,35 @@ impl CosmicDockAppButtonWindow {
             ..set_height_request(1);
             ..set_decorated(false);
             ..set_resizable(false);
-            ..set_title(Some(&fl!("cosmic-dock-app-button")));
+            ..set_title(Some(&fl!("cosmic-plugin-app-button")));
             ..add_css_class("root_window");
         };
 
-        if let Some(apps_desktop_info) =
-            DesktopAppInfo::new(APPLIBRARY)
-        {
-            let app_button = Button::new();
-            app_button.add_css_class("apps");
-            let icon = apps_desktop_info
-                .icon()
-                .unwrap_or(Icon::for_string("image-missing").expect("Failed to set default icon"));
+        if let Some(apps_desktop_info) = DesktopAppInfo::new(APPLIBRARY) {
+            let app_button = cascade! {
+                Button::new();
+                ..add_css_class("apps");
+            };
+            let icon = apps_desktop_info.icon().unwrap_or_else(|| {
+                Icon::for_string("image-missing").expect("Failed to set default icon")
+            });
+            let container = gtk4::Box::new(Orientation::Horizontal, 0);
+            let image = cascade! {
+                gtk4::Image::from_gicon(&icon);
+                ..set_hexpand(true);
+                ..set_halign(Align::Center);
+                ..set_pixel_size(48);
+                ..set_tooltip_text(Some("Application Library"));
+            };
+            container.append(&image);
 
-            let image = gtk4::Image::from_gicon(&icon);
-            image.set_icon_size(gtk4::IconSize::Large);
-            image.set_pixel_size(64);
-            app_button.set_child(Some(&image));
+            app_button.set_child(Some(&container));
 
             app_button.connect_clicked(move |_| {
-                let _ = Command::new("xdg-shell-wrapper").env_remove("WAYLAND_SOCKET").arg(apps_desktop_info.string("Exec").unwrap().as_str()).spawn();
+                let _ = Command::new("xdg-shell-wrapper")
+                    .env_remove("WAYLAND_SOCKET")
+                    .arg(apps_desktop_info.string("Exec").unwrap().as_str())
+                    .spawn();
             });
             self_.set_child(Some(&app_button));
         } else {

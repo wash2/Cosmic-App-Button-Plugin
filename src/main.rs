@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0-only
 
-use apps_window::CosmicDockAppButtonWindow;
+use apps_window::CosmicPanelAppButtonWindow;
 use gtk4::gdk::Display;
 use gtk4::{
     gio::{self, ApplicationFlags},
@@ -13,7 +13,7 @@ mod apps_window;
 mod localize;
 mod utils;
 
-const ID: &str = "com.system76.CosmicDockAppButton";
+const ID: &str = "com.system76.CosmicPanelAppButton";
 
 pub fn localize() {
     let localizer = crate::localize::localizer();
@@ -38,7 +38,7 @@ fn load_css() {
 fn main() {
     // Initialize logger
     pretty_env_logger::init();
-    glib::set_application_name("Cosmic Dock App Button");
+    glib::set_application_name("Cosmic Panel App Button");
 
     localize();
 
@@ -47,7 +47,7 @@ fn main() {
 
     app.connect_activate(|app| {
         load_css();
-        let window = CosmicDockAppButtonWindow::new(&app);
+        let window = CosmicPanelAppButtonWindow::new(app);
 
         window.show();
     });

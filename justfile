@@ -8,7 +8,7 @@ vendor_args := if vendor == '1' { '--frozen --offline' } else { '' }
 debug_args := if debug == '1' { '' } else { '--release' }
 cargo_args := vendor_args + ' ' + debug_args
 
-id := 'com.system76.CosmicDockAppButton'
+id := 'com.system76.CosmicPanelAppButton'
 
 sharedir := rootdir + prefix + '/share'
 iconsdir := sharedir + '/icons/hicolor/scalable/apps'
@@ -23,7 +23,7 @@ install:
     install -Dm0644 data/icons/{{id}}.Devel.svg {{iconsdir}}/{{id}}.Devel.svg
     install -Dm0644 data/icons/{{id}}.svg {{iconsdir}}/{{id}}.svg
     install -Dm0644 data/{{id}}.desktop {{sharedir}}/applications/{{id}}.desktop
-    install -Dm04755 target/release/cosmic-dock-app-button {{bindir}}/cosmic-dock-app-button
+    install -Dm04755 target/release/cosmic-panel-app-button {{bindir}}/cosmic-panel-app-button
 
 # Extracts vendored dependencies if vendor=1
 _extract_vendor:
